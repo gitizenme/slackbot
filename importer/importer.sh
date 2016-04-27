@@ -2,7 +2,6 @@
 touch $1
 > $1
 robots=(
-    "github.com/trinchan/slackbot/robots/ping"
     "github.com/trinchan/slackbot/robots/raffl"
 )
 

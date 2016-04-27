@@ -22,7 +22,7 @@ func (pb bot) DeferredAction(p *robots.Payload) {
 	response := &robots.IncomingWebhook{
 		Domain:      p.TeamDomain,
 		Channel:     p.ChannelID,
-		Username:    "Raffl Bot",
+		Username:    "r	affl",
 		Text:        fmt.Sprintf("@%s Raffl!", p.UserName),
 		IconEmoji:   ":gift:",
 		UnfurlLinks: true,
