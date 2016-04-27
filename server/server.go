@@ -41,10 +41,12 @@ func hookHandler(robotMap map[string][]robots.Robot) http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		com := strings.TrimPrefix(command.Text, command.TriggerWord+" ")
+		com := strings.TrimPrefix(command.Text, command.TriggerWord)
 		c := strings.Split(com, " ")
 		command.Robot = c[0]
 		command.Text = strings.Join(c[1:], " ")
+
+		log.Printf("[DEBUG] Robot: %s Text: %s", command.Robot, command.Text)
 
 		robots := robots.Robots[command.Robot]
 		if len(robots) == 0 {
