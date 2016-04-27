@@ -15,14 +15,15 @@ func init() {
 
 func (pb bot) Run(p *robots.Payload) (slashCommandImmediateReturn string) {
 	go pb.DeferredAction(p)
-	return "raffl this!"
+	//return "raffl this!"
+	return "raffl"
 }
 
 func (pb bot) DeferredAction(p *robots.Payload) {
 	response := &robots.IncomingWebhook{
 		Domain:      p.TeamDomain,
 		Channel:     p.ChannelID,
-		Username:    "r	affl",
+		Username:    "raffl",
 		Text:        fmt.Sprintf("@%s Raffl!", p.UserName),
 		IconEmoji:   ":gift:",
 		UnfurlLinks: true,
