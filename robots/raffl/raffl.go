@@ -32,7 +32,7 @@ func (pb bot) DeferredAction(p *robots.Payload) {
 
 	message := ""
 	if pick > 0 && pick < len(reasons) {
-		message = fmt.Sprint("Your a winner! Here is your prize: %s", reasons[pick])
+		message = fmt.Sprintf("Your a winner! Here is your prize: %s", reasons[pick])
 	} else {
 		message = "Sorry, better luck next time!"
 	}
