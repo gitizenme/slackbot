@@ -86,6 +86,9 @@ func slashCommandHandler(robotMap map[string][]robots.Robot) http.HandlerFunc {
 			log.Printf("[DEBUG] Ignoring request from unidentified source: %s - %s", command.Token, r.Host)
 			w.WriteHeader(http.StatusBadRequest)
 		}
+
+		log.Printf("[DEBUG] Robot: %s Text: %s", command.Robot, command.Text)
+
 		robots := robots.Robots[command.Robot]
 		if len(robots) == 0 {
 			plainResp(w, "No robot for that command yet :(")
