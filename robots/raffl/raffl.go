@@ -39,9 +39,9 @@ func (pb bot) DeferredAction(p *robots.Payload) {
 
 	response := &robots.IncomingWebhook{
 		Domain:      p.TeamDomain,
-		Channel:     p.ChannelID,
+		Channel:     "@" + p.UserName,
 		Username:    "raffl",
-		Text:        fmt.Sprintf("Hi @%s!\n %s\n %s", p.UserName, "Let's see if you've won a prize.", message),
+		Text:        fmt.Sprintf("Hi @%s!\n %s\n %s", p.UserName, "Let's see if you've won a prize...", message),
 		IconEmoji:   ":gift:",
 		UnfurlLinks: true,
 		Parse:       robots.ParseStyleFull,
