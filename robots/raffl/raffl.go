@@ -4,13 +4,9 @@ import (
 	"fmt"
 
 	"github.com/trinchan/slackbot/robots"
-	"github.com/boltdb/bolt"
 	"math/rand"
-	"log"
 	"time"
-	"encoding/json"
 	"github.com/trinchan/slackbot/robots/raffl/db"
-	"boldtb/person"
 )
 
 type Prize struct {
@@ -28,13 +24,17 @@ func init() {
 	p := &bot{}
 	robots.RegisterRobot("raffl", p)
 
-	prize.Open()
-	defer prize.Close()
-
 	// A Person struct consists of ID, Name, Age, Job.
 	prizes := []*prize.Prize{
 		{"100", "JetBrains product license", "1 year subscription to any product", "11112222", false, ""},
 	}
+
+	fmt.Println("Prizes: %s", prizes)
+
+	/*
+	prize.Open()
+	defer prize.Close()
+
 
 	// Persist people in the database.
 	for _, p := range prizes {
@@ -54,6 +54,7 @@ func init() {
 	person.List(prize.PrizeBucketName)                     // each key/val in people bucket
 	person.ListPrefix(prize.PrizeBucketName, "20")         // ... with key prefix `20`
 	person.ListRange(prize.PrizeBucketName, "101", "103")  // ... within range `101` to `103`
+	*/
 
 }
 
@@ -64,30 +65,7 @@ func (pb bot) Run(p *robots.Payload) (slashCommandImmediateReturn string) {
 
 func (pb bot) DeferredAction(p *robots.Payload) {
 
-
-	db, err := bolt.Open("my.db", 0600, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-
-	rafflePrizes := make([]Prize, 0)
-
-	db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("prizes"))
-		b.ForEach(func(k, v []byte) error {
-			fmt.Printf("key=%s, value=%s\n", k, v)
-				var p *Prize;
-			err := json.Unmarshal(v, &p)
-			if err != nil {
-				return err
-			}
-			rafflePrizes = append(rafflePrizes, p)
-			return nil
-		})
-		return nil
-	})
-
+	rafflePrizes := make([]prize.Prize, 0)
 
 	pick := rand.Intn(8)
 

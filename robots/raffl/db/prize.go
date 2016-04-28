@@ -10,13 +10,12 @@ import (
 	"runtime"
 	"encoding/json"
 	"encoding/gob"
-
 	"github.com/boltdb/bolt"
 )
 
 var db *bolt.DB
 var open bool
-const PrizeBucketName = "prizes"prizeBucketName
+const PrizeBucketName = "prizes"
 
 type Prize struct {
 	ID string
