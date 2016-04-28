@@ -4,8 +4,17 @@
 	"GodepVersion": "v62",
 	"Deps": [
 		{
+			"ImportPath": "github.com/boltdb/bolt",
+			"Comment": "v1.2.0-21-gd974993",
+			"Rev": "d97499360d1ecebc492ea66c7447ea948f417620"
+		},
+		{
 			"ImportPath": "github.com/gorilla/schema",
 			"Rev": "7109aabdadf822989b99f1e560b7ea619c20cbb0"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "c8bc69bc2db9c57ccf979550bc69655df5039a8a"
 		}
 	]
 }
