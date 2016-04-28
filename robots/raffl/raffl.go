@@ -41,7 +41,7 @@ func (pb bot) DeferredAction(p *robots.Payload) {
 		Domain:      p.TeamDomain,
 		Channel:     p.ChannelID,
 		Username:    "raffl",
-		Text:        fmt.Sprintf("Hi @%s\n. %s\n %s", p.UserName, "Let's see if you've won a prize.", message),
+		Text:        fmt.Sprintf("Hi @%s!\n %s\n %s", p.UserName, "Let's see if you've won a prize.", message),
 		IconEmoji:   ":gift:",
 		UnfurlLinks: true,
 		Parse:       robots.ParseStyleFull,
