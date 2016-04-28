@@ -28,7 +28,7 @@ func (pb bot) DeferredAction(p *robots.Payload) {
 		"Raffle Item 3",
 		"Raffle Item 4")
 
-	pick := rand.Intn(100)
+	pick := rand.Intn(8)
 
 	message := ""
 	if pick > 0 && pick < len(reasons) {
