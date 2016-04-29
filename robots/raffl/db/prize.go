@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 	"time"
-	"path"
+	//"path"
 	"bytes"
-	"runtime"
+	//"runtime"
 	"encoding/json"
 	"encoding/gob"
 	"github.com/boltdb/bolt"
@@ -28,10 +28,10 @@ type Prize struct {
 
 func Open() error {
 	var err error
-	_, filename, _, _ := runtime.Caller(0)  // get full path of this file
-	dbfile := path.Join(path.Dir(filename), "data.db")
+	//_, filename, _, _ := runtime.Caller(0)  // get full path of this file
+	//dbfile := path.Join(path.Dir(filename), "data.db")
 	config := &bolt.Options{Timeout: 1 * time.Second}
-	db, err = bolt.Open(dbfile, 0600, config)
+	db, err = bolt.Open("prize.db", 0600, config)
 	if err != nil {
 		log.Fatal(err)
 	}
