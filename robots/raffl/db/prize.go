@@ -1,6 +1,5 @@
 package prize
 
-
 import (
 	"fmt"
 	"log"
@@ -15,15 +14,16 @@ import (
 
 var db *bolt.DB
 var open bool
+
 const PrizeBucketName = "prizes"
 
 type Prize struct {
-	ID string
-	Title   string
+	ID          string
+	Title       string
 	Description string
-	LicenseKey string
-	Claimed bool
-	Username string
+	LicenseKey  string
+	Claimed     bool
+	Username    string
 }
 
 func Open() error {
@@ -103,7 +103,7 @@ func decode(data []byte) (*Prize, error) {
 
 func GetPrize(id string) (*Prize, error) {
 	if !open {
-		return nil, fmt.Errorf("db must be opened before saving!")
+		return nil, fmt.Errorf("db must be opened before reading!")
 	}
 	var p *Prize
 	err := db.View(func(tx *bolt.Tx) error {
@@ -123,7 +123,10 @@ func GetPrize(id string) (*Prize, error) {
 	return p, nil
 }
 
-func List(bucket string) {
+func List(bucket string) (error) {
+	if !open {
+		return fmt.Errorf("db must be opened before query!")
+	}
 	db.View(func(tx *bolt.Tx) error {
 		c := tx.Bucket([]byte(bucket)).Cursor()
 		for k, v := c.First(); k != nil; k, v = c.Next() {
@@ -131,9 +134,13 @@ func List(bucket string) {
 		}
 		return nil
 	})
+	return nil;
 }
 
-func ListPrefix(bucket, prefix string) {
+func ListPrefix(bucket, prefix string) (error) {
+	if !open {
+		return fmt.Errorf("db must be opened before query!")
+	}
 	db.View(func(tx *bolt.Tx) error {
 		c := tx.Bucket([]byte(bucket)).Cursor()
 		p := []byte(prefix)
@@ -142,9 +149,13 @@ func ListPrefix(bucket, prefix string) {
 		}
 		return nil
 	})
+	return nil;
 }
 
-func ListRange(bucket, start, stop string) {
+func ListRange(bucket, start, stop string) (error) {
+	if !open {
+		return fmt.Errorf("db must be opened before query!")
+	}
 	db.View(func(tx *bolt.Tx) error {
 		c := tx.Bucket([]byte(bucket)).Cursor()
 		min := []byte(start)
@@ -155,4 +166,5 @@ func ListRange(bucket, start, stop string) {
 		}
 		return nil
 	})
+	return nil;
 }

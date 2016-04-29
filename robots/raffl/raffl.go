@@ -55,14 +55,10 @@ func InitDb (p *robots.Payload) (err error) {
 		{"100", "JetBrains product license", "1 year subscription to any product", "11112222", false, ""},
 	}
 
-	fmt.Println("Prizes: %s", prizes)
-
-
 	// Persist prizes in the database.
 	for _, p := range prizes {
 		p.Save()
 	}
-
 
 	return nil;
 }
