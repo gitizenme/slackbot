@@ -82,7 +82,12 @@ func (pb bot) Run(p *robots.Payload) (slashCommandImmediateReturn string) {
 		break;
 	case "status":
 		status = "running status"
-		prize.List(prize.PrizeBucketName)                     // each key/val in people bucket
+		p, err := prize.GetPrize("100")
+		if err != nil {
+			status = "Prize not found"
+		}
+		status = fmt.Sprint(p)
+		//prize.List(prize.PrizeBucketName)                     // each key/val in people bucket
 		break;
 	default:
 		status = "checking for winner"
