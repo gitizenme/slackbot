@@ -75,7 +75,7 @@ func (pb bot) Run(p *robots.Payload) (slashCommandImmediateReturn string) {
 
 	status := "checking..."
 
-	if(!botInitialized) {
+	if(!botInitialized && p.Text != "init") {
 		return "raffle needs to be initialized before continuing..."
 	}
 
