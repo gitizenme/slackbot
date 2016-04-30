@@ -99,6 +99,48 @@ func decode(data []byte) (*Prize, error) {
 	return p, nil
 }
 
+func SelectAndClaimPrize(index int, userName string) (string, error) {
+
+	if !open {
+		return "", fmt.Errorf("db must be opened before reading!")
+	}
+
+	var p *Prize
+
+	err := db.View(func(tx *bolt.Tx) error {
+		var err error
+		count := 0;
+
+		c := tx.Bucket([]byte(PrizeBucketName)).Cursor()
+
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			count++;
+			if count == index {
+				p, err = decode(v);
+				if err != nil {
+					return err
+				}
+				break;
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return "", fmt.Errorf("Could not select Prize, please try again later... (%v)", index)
+	}
+
+	p.Claimed = true;
+	p.Username = userName
+	err = p.Save()
+	if err != nil {
+		return "", fmt.Errorf("Could not claim Prize, please try again later... %v", p.ID)
+	}
+
+	prizeInfo := fmt.Sprintf("%s - %s", p.Title, p.Description);
+
+	return prizeInfo, nil
+}
+
 func GetPrize(id string) (*Prize, error) {
 	if !open {
 		return nil, fmt.Errorf("db must be opened before reading!")
