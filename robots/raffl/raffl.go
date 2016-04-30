@@ -153,8 +153,10 @@ func (pb bot) CheckForPrizeWinDeferred(p *robots.Payload) {
 	numberOfPrizes := prize.NumberOfPrizes(prize.PrizeBucketName)
 
 	pick := rand.Intn(4)
-
 	outcome := ""
+
+	log.Printf("Number of prizes: %v - pick %v", numberOfPrizes, pick)
+
 	if pick > 0 && pick <= numberOfPrizes {
 		prizeInfo, err := prize.SelectAndClaimPrize(pick, p.UserName)
 		if err != nil {
