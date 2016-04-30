@@ -52,6 +52,7 @@ func InitDb(payload *robots.Payload) (err error) {
 			"CH3DZ-3EEVS-727UJ-2P4KK-7IHL8",
 			false,
 			"",
+			"",
 			"https://www.jetbrains.com/products.html",
 		},
 		{
@@ -60,6 +61,7 @@ func InitDb(payload *robots.Payload) (err error) {
 			"1 year subscription to any product\nLicense Key: 7WIF8-AKIWA-CX0QD-A7BY8-6A1EH",
 			"7WIF8-AKIWA-CX0QD-A7BY8-6A1EH",
 			false,
+			"",
 			"",
 			"https://www.jetbrains.com/products.html",
 		},
@@ -154,17 +156,22 @@ func (pb bot) CheckForPrizeWinDeferred(p *robots.Payload) {
 	defer prize.Close()
 	numberOfPrizes := prize.NumberOfPrizes(prize.PrizeBucketName)
 
+	if numberOfPrizes == 0 {
+		SendResponse(p, "All prizes have been claimed for this round. An new round will open up soon...")
+		return
+	}
+
 	pick := rand.Intn(4)
 	outcome := ""
 
 	log.Printf("Number of prizes: %v - pick %v", numberOfPrizes, pick)
 
 	if pick > 0 && pick <= numberOfPrizes {
-		prizeInfo, err := prize.SelectAndClaimPrize(pick, p.UserName)
+		prizeInfo, err := prize.SelectAndClaimPrize(pick, p.UserName, p.UserID)
 		if err != nil {
 			outcome = fmt.Sprintf("Something went wrong, our crack dev team will check this out: %v", err)
 		} else {
-			outcome = fmt.Sprintf("Your a winner!\nHere is your prize:\n%v", prizeInfo)
+			outcome = fmt.Sprintf("You're a winner!\n%v", prizeInfo)
 		}
 	} else {
 		outcome = "Sorry, better luck next time!"

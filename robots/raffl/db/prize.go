@@ -22,6 +22,7 @@ type Prize struct {
 	LicenseKey  string
 	Claimed     bool
 	Username    string
+	Userid	    string
 	Link	    string
 }
 
@@ -98,7 +99,7 @@ func decode(data []byte) (*Prize, error) {
 	return p, nil
 }
 
-func SelectAndClaimPrize(index int, userName string) (string, error) {
+func SelectAndClaimPrize(index int, userName string, userID string) (string, error) {
 
 	if !open {
 		return "", fmt.Errorf("db must be opened before reading!")
@@ -129,9 +130,10 @@ func SelectAndClaimPrize(index int, userName string) (string, error) {
 	}
 
 	prizeInfo := ""
-	if(userName != p.Username) {
+	if(userID != p.Userid) {
 		p.Claimed = true;
 		p.Username = userName
+		p.Userid = userID
 		err = p.Save()
 		if err != nil {
 			return "", fmt.Errorf("Could not claim Prize, please try again later... %v", p.ID)
