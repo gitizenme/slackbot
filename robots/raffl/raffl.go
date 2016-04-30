@@ -43,13 +43,16 @@ func init() {
 
 }
 
-func InitDb (p *robots.Payload) (err error) {
+func InitDb (payload *robots.Payload) (err error) {
 
 	if(botInitialized) {
 		return nil;
 	}
 
 	log.Println("Initializing the Database")
+
+	prize.Open()
+	defer prize.Close()
 
 	prizes := []*prize.Prize{
 		{"100", "JetBrains product license", "1 year subscription to any product", "11112222", false, ""},
@@ -59,6 +62,8 @@ func InitDb (p *robots.Payload) (err error) {
 	for _, p := range prizes {
 		p.Save()
 	}
+
+	prize.List(prize.PrizeBucketName)                     // each key/val in people bucket
 
 	return nil;
 }
