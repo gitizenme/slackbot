@@ -164,12 +164,12 @@ func (pb bot) CheckForPrizeWinDeferred(p *robots.Payload) {
 		if err != nil {
 			outcome = fmt.Sprintf("Something went wrong, our crack dev team will check this out: %v", err)
 		} else {
-			outcome = fmt.Sprintf("Your a winner! Here is your prize: %v", prizeInfo)
+			outcome = fmt.Sprintf("Your a winner!\nHere is your prize:\n%v", prizeInfo)
 		}
 	} else {
 		outcome = "Sorry, better luck next time!"
 	}
-	message := fmt.Sprintf("Hi @%s!\n %s\n %s", p.UserName, "Let's see if you've won a prize...", outcome)
+	message := fmt.Sprintf("Hi @%s!\n%s\n%s", p.UserName, "Let's see if you've won a prize...", outcome)
 	SendResponse(p, message)
 }
 

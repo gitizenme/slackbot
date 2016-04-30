@@ -136,7 +136,7 @@ func SelectAndClaimPrize(index int, userName string) (string, error) {
 		if err != nil {
 			return "", fmt.Errorf("Could not claim Prize, please try again later... %v", p.ID)
 		}
-		prizeInfo = fmt.Sprintf("Title: %v\nDetails: %v\nLicense Key: %v\nMore info: %v\n", p.Title, p.Description, p.LicenseKey, p.Link)
+		prizeInfo = fmt.Sprintf("Title: %v\nDetails: %v\nFor more info go to: %v\n", p.Title, p.Description, p.Link)
 	}  else {
 		prizeInfo = "Sorry, you've already claimed a raffle prize for this round. Please try again in te next round."
 	}
