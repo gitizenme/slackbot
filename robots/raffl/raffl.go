@@ -135,13 +135,14 @@ func (pb bot) PrizeStatusDeferred(p *robots.Payload) {
 
 func (pb bot) CheckForPrizeWinDeferred(p *robots.Payload) {
 
-	rafflePrizes := make([]prize.Prize, 0)
+	numberOfPrizes := prize.NumberOfPrizes(prize.PrizeBucketName)
 
 	pick := rand.Intn(8)
 
 	outcome := ""
-	if pick >= 0 && pick < len(rafflePrizes) {
-		outcome = fmt.Sprintf("Your a winner! Here is your prize: %s", rafflePrizes[pick])
+	if pick > 0 && pick <= numberOfPrizes {
+		// TODO write a method to select a KV, update and return the prize info
+		outcome = fmt.Sprintf("Your a winner! Here is your prize: %s", "")
 	} else {
 		outcome = "Sorry, better luck next time!"
 	}
