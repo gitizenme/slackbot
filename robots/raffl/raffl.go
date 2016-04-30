@@ -64,6 +64,9 @@ func InitDb (payload *robots.Payload) (err error) {
 
 	prize.List(prize.PrizeBucketName)                     // each key/val in people bucket
 
+	numberOfPrizes := prize.NumberOfPrizes(prize.PrizeBucketName)
+	log.Printf("Number of prizes: %s", numberOfPrizes)
+
 	return nil;
 }
 

@@ -28,8 +28,6 @@ type Prize struct {
 
 func Open() error {
 	var err error
-	//_, filename, _, _ := runtime.Caller(0)  // get full path of this file
-	//dbfile := path.Join(path.Dir(filename), "data.db")
 	config := &bolt.Options{Timeout: 1 * time.Second}
 	db, err = bolt.Open("prize.db", 0600, config)
 	if err != nil {
@@ -123,6 +121,17 @@ func GetPrize(id string) (*Prize, error) {
 	return p, nil
 }
 
+func NumberOfPrizes(bucket string) (int) {
+	var numberOfPrizes int
+
+	db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(bucket))
+		numberOfPrizes = b.Stats().KeyN
+		return nil
+	})
+	return numberOfPrizes
+}
+
 func List(bucket string) (string) {
 	if !open {
 		return "Prize list not available, please try again later..."
@@ -141,25 +150,32 @@ func List(bucket string) (string) {
 	return prizeList
 }
 
-func ListPrefix(bucket, prefix string) (error) {
+func ListPrefix(bucket, prefix string) (string) {
 	if !open {
-		return fmt.Errorf("db must be opened before query!")
+		return "Prize list not available, please try again later..."
 	}
+
+	prizeList := "Prize List\n"
+
 	db.View(func(tx *bolt.Tx) error {
 		c := tx.Bucket([]byte(bucket)).Cursor()
 		p := []byte(prefix)
 		for k, v := c.Seek(p); bytes.HasPrefix(k, p); k, v = c.Next() {
 			fmt.Printf("key=%s, value=%s\n", k, v)
+			prizeList += fmt.Sprintf("Prize: %s\n", v)
 		}
 		return nil
 	})
-	return nil;
+	return prizeList
 }
 
-func ListRange(bucket, start, stop string) (error) {
+func ListRange(bucket, start, stop string) (string) {
 	if !open {
-		return fmt.Errorf("db must be opened before query!")
+		return "Prize list not available, please try again later..."
 	}
+
+	prizeList := "Prize List\n"
+
 	db.View(func(tx *bolt.Tx) error {
 		c := tx.Bucket([]byte(bucket)).Cursor()
 		min := []byte(start)
@@ -167,8 +183,9 @@ func ListRange(bucket, start, stop string) (error) {
 		for k, v := c.Seek(min); k != nil && bytes.Compare(k, max) <= 0;
 		k, v = c.Next() {
 			fmt.Printf("%s: %s\n", k, v)
+			prizeList += fmt.Sprintf("Prize: %s\n", v)
 		}
 		return nil
 	})
-	return nil;
+	return prizeList
 }
