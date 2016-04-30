@@ -48,8 +48,8 @@ func InitDb(payload *robots.Payload) (err error) {
 		{
 			"100",
 			"JetBrains Product License",
-			"1 year subscription to any product\nLicense Key: XXXXX",
-			"XXXXX",
+			"1 year subscription to any product\nLicense Key: CH3DZ-3EEVS-727UJ-2P4KK-7IHL8",
+			"CH3DZ-3EEVS-727UJ-2P4KK-7IHL8",
 			false,
 			"",
 			"",
@@ -58,8 +58,8 @@ func InitDb(payload *robots.Payload) (err error) {
 		{
 			"101",
 			"JetBrains product license",
-			"1 year subscription to any product\nLicense Key: XXXXX",
-			"XXXXX",
+			"1 year subscription to any product\nLicense Key: 7WIF8-AKIWA-CX0QD-A7BY8-6A1EH",
+			"7WIF8-AKIWA-CX0QD-A7BY8-6A1EH",
 			false,
 			"",
 			"",
