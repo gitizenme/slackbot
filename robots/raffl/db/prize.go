@@ -138,7 +138,7 @@ func SelectAndClaimPrize(index int, userName string, userID string) (string, err
 		if err != nil {
 			return "", fmt.Errorf("Could not claim Prize, please try again later... %v", p.ID)
 		}
-		prizeInfo = fmt.Sprintf("Title: %v\nDetails: %v\nFor more info go to: %v\n", p.Title, p.Description, p.Link)
+		prizeInfo = fmt.Sprintf("You're a winner!\nTitle: %v\nDetails: %v\nFor more info go to: %v\n", p.Title, p.Description, p.Link)
 	}  else {
 		prizeInfo = "Sorry, you've already claimed a raffle prize for this round. Please try again in te next round."
 	}
@@ -168,7 +168,7 @@ func GetPrize(id string) (*Prize, error) {
 	return p, nil
 }
 
-func NumberOfPrizes(bucket string) (int) {
+func Count(bucket string) (int) {
 	var numberOfPrizes int
 
 	db.View(func(tx *bolt.Tx) error {
@@ -180,6 +180,31 @@ func NumberOfPrizes(bucket string) (int) {
 		return nil
 	})
 	return numberOfPrizes
+}
+
+func numberOfPrizes(bucket string, claimed bool) (int) {
+	var numberOfPrizes int
+
+	db.View(func(tx *bolt.Tx) error {
+		numberOfPrizes = 0
+		c := tx.Bucket([]byte(PrizeBucketName)).Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			p, err := decode(v);
+			if err == nil && p.Claimed == claimed {
+				numberOfPrizes++
+			}
+		}
+		return nil
+	})
+	return numberOfPrizes
+}
+
+func NumberOfUnclaimedPrizes(bucket string) (int) {
+	return numberOfPrizes(bucket, false)
+}
+
+func NumberOfClaimedPrizes(bucket string) (int) {
+	return numberOfPrizes(bucket, true)
 }
 
 func List(bucket string) (string) {

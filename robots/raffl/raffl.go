@@ -74,7 +74,7 @@ func InitDb(payload *robots.Payload) (err error) {
 
 	prize.List(prize.PrizeBucketName)                     // each key/val in people bucket
 
-	numberOfPrizes := prize.NumberOfPrizes(prize.PrizeBucketName)
+	numberOfPrizes := prize.Count(prize.PrizeBucketName)
 	log.Printf("Number of prizes: %d", numberOfPrizes)
 
 	return nil;
@@ -154,9 +154,9 @@ func (pb bot) CheckForPrizeWinDeferred(p *robots.Payload) {
 
 	prize.Open()
 	defer prize.Close()
-	numberOfPrizes := prize.NumberOfPrizes(prize.PrizeBucketName)
+	numberOfUnclaimedPrizes := prize.NumberOfUnclaimedPrizes(prize.PrizeBucketName)
 
-	if numberOfPrizes == 0 {
+	if numberOfUnclaimedPrizes == 0 {
 		SendResponse(p, "All prizes have been claimed for this round. An new round will open up soon...")
 		return
 	}
@@ -164,14 +164,14 @@ func (pb bot) CheckForPrizeWinDeferred(p *robots.Payload) {
 	pick := rand.Intn(4)
 	outcome := ""
 
-	log.Printf("Number of prizes: %v - pick %v", numberOfPrizes, pick)
+	log.Printf("Number of prizes: %v - pick %v", numberOfUnclaimedPrizes, pick)
 
-	if pick > 0 && pick <= numberOfPrizes {
+	if pick > 0 && pick <= numberOfUnclaimedPrizes {
 		prizeInfo, err := prize.SelectAndClaimPrize(pick, p.UserName, p.UserID)
 		if err != nil {
 			outcome = fmt.Sprintf("Something went wrong, our crack dev team will check this out: %v", err)
 		} else {
-			outcome = fmt.Sprintf("You're a winner!\n%v", prizeInfo)
+			outcome = prizeInfo
 		}
 	} else {
 		outcome = "Sorry, better luck next time!"
