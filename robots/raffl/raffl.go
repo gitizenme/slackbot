@@ -55,6 +55,7 @@ func InitDb (payload *robots.Payload) (err error) {
 
 	prizes := []*prize.Prize{
 		{"100", "JetBrains product license", "1 year subscription to any product", "11112222", false, ""},
+		{"101", "JetBrains product license", "1 year subscription to any product", "11112222", false, ""},
 	}
 
 	// Persist prizes in the database.
@@ -65,7 +66,7 @@ func InitDb (payload *robots.Payload) (err error) {
 	prize.List(prize.PrizeBucketName)                     // each key/val in people bucket
 
 	numberOfPrizes := prize.NumberOfPrizes(prize.PrizeBucketName)
-	log.Printf("Number of prizes: %s", numberOfPrizes)
+	log.Printf("Number of prizes: %d", numberOfPrizes)
 
 	return nil;
 }
