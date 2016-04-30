@@ -170,8 +170,11 @@ func NumberOfPrizes(bucket string) (int) {
 	var numberOfPrizes int
 
 	db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(bucket))
-		numberOfPrizes = b.Stats().KeyN
+		numberOfPrizes = 0;
+		c := tx.Bucket([]byte(PrizeBucketName)).Cursor()
+		for k, _ := c.First(); k != nil; k, _ = c.Next() {
+			numberOfPrizes++;
+		}
 		return nil
 	})
 	return numberOfPrizes
