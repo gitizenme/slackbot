@@ -134,7 +134,7 @@ func List(bucket string) (string) {
 		c := tx.Bucket([]byte(bucket)).Cursor()
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			fmt.Printf("key=%s, value=%s\n", k, v)
-			prizeList += fmt.Sprint("Prize: %s\n", v)
+			prizeList += fmt.Sprintf("Prize: %s\n", v)
 		}
 		return nil
 	})
