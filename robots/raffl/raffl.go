@@ -4,19 +4,10 @@ import (
 	"fmt"
 	"github.com/trinchan/slackbot/robots"
 	"math/rand"
-	"time"
 	"github.com/trinchan/slackbot/robots/raffl/db"
 	"log"
 )
 
-type Prize struct {
-	Created time.Time
-	Title   string
-	Description string
-	LicenseKey string
-	Claimed bool
-	Username string
-}
 
 type bot struct{}
 
@@ -26,25 +17,25 @@ func init() {
 	p := &bot{}
 	robots.RegisterRobot("raffl", p)
 
-/*
-		// Get a prize from the database by their ID.
-		for _, id := range []string{"100", "101"} {
-			p, err := person.GetPerson(id)
-			if err != nil {
-				log.Fatal(err)
+	/*
+			// Get a prize from the database by their ID.
+			for _, id := range []string{"100", "101"} {
+				p, err := person.GetPerson(id)
+				if err != nil {
+					log.Fatal(err)
+				}
+				fmt.Println(p)
 			}
-			fmt.Println(p)
-		}
 
-		person.ListPrefix(prize.PrizeBucketName, "20")         // ... with key prefix `20`
-		person.ListRange(prize.PrizeBucketName, "101", "103")  // ... within range `101` to `103`
-		*/
+			person.ListPrefix(prize.PrizeBucketName, "20")         // ... with key prefix `20`
+			person.ListRange(prize.PrizeBucketName, "101", "103")  // ... within range `101` to `103`
+			*/
 
 }
 
-func InitDb (payload *robots.Payload) (err error) {
+func InitDb(payload *robots.Payload) (err error) {
 
-	if(botInitialized) {
+	if (botInitialized) {
 		return nil;
 	}
 
@@ -54,8 +45,24 @@ func InitDb (payload *robots.Payload) (err error) {
 	defer prize.Close()
 
 	prizes := []*prize.Prize{
-		{"100", "JetBrains product license", "1 year subscription to any product", "11112222", false, ""},
-		{"101", "JetBrains product license", "1 year subscription to any product", "11112222", false, ""},
+		{
+			"100",
+			"JetBrains Product License",
+			"1 year subscription to any product\nLicense Key: CH3DZ-3EEVS-727UJ-2P4KK-7IHL8",
+			"CH3DZ-3EEVS-727UJ-2P4KK-7IHL8",
+			false,
+			"",
+			"https://www.jetbrains.com/products.html",
+		},
+		{
+			"101",
+			"JetBrains product license",
+			"1 year subscription to any product\nLicense Key: 7WIF8-AKIWA-CX0QD-A7BY8-6A1EH",
+			"7WIF8-AKIWA-CX0QD-A7BY8-6A1EH",
+			false,
+			"",
+			"https://www.jetbrains.com/products.html",
+		},
 	}
 
 	// Persist prizes in the database.
@@ -79,7 +86,7 @@ func (pb bot) Run(p *robots.Payload) (slashCommandImmediateReturn string) {
 
 	status := "checking..."
 
-	if(!botInitialized && p.Text != "init") {
+	if (!botInitialized && p.Text != "init") {
 		return "raffle needs to be initialized before continuing..."
 	}
 
@@ -90,7 +97,11 @@ func (pb bot) Run(p *robots.Payload) (slashCommandImmediateReturn string) {
 		break;
 	case "status":
 		status = "running status"
-		go pb.PrizeStatusDeferred(p)
+		go pb.PrizeStatusDeferred(p, false)
+		break;
+	case "astatus":
+		status = "running admin status"
+		go pb.PrizeStatusDeferred(p, true)
 		break;
 	default:
 		status = "checking for winner"
@@ -104,7 +115,7 @@ func (pb bot) InitializeDeferred(p *robots.Payload) {
 
 	message := ""
 	err := InitDb(p)
-	if(err != nil) {
+	if (err != nil) {
 		botInitialized = false;
 		message = "Initialization failed"
 	} else {
@@ -127,22 +138,30 @@ var SendResponse = func(p *robots.Payload, message string) {
 	response.Send()
 }
 
-func (pb bot) PrizeStatusDeferred(p *robots.Payload) {
+func (pb bot) PrizeStatusDeferred(p *robots.Payload, admin bool) {
 	prize.Open()
 	defer prize.Close()
-	SendResponse(p, prize.List(prize.PrizeBucketName))
+	if admin {
+		SendResponse(p, prize.List(prize.PrizeBucketName))
+	} else {
+		SendResponse(p, prize.ListUnclaimed(prize.PrizeBucketName))
+	}
 }
 
 func (pb bot) CheckForPrizeWinDeferred(p *robots.Payload) {
 
 	numberOfPrizes := prize.NumberOfPrizes(prize.PrizeBucketName)
 
-	pick := rand.Intn(8)
+	pick := rand.Intn(4)
 
 	outcome := ""
 	if pick > 0 && pick <= numberOfPrizes {
-		// TODO write a method to select a KV, update and return the prize info
-		outcome = fmt.Sprintf("Your a winner! Here is your prize: %s", "")
+		prizeInfo, err := prize.SelectAndClaimPrize(pick, p.UserName)
+		if err != nil {
+			outcome = fmt.Sprintf("Something went wrong, our crack dev team will check this out: %v", err)
+		} else {
+			outcome = fmt.Sprintf("Your a winner! Here is your prize: %v", prizeInfo)
+		}
 	} else {
 		outcome = "Sorry, better luck next time!"
 	}

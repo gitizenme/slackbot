@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"log"
 	"time"
-	//"path"
 	"bytes"
-	//"runtime"
 	"encoding/json"
 	"encoding/gob"
 	"github.com/boltdb/bolt"
@@ -24,6 +22,7 @@ type Prize struct {
 	LicenseKey  string
 	Claimed     bool
 	Username    string
+	Link	    string
 }
 
 func Open() error {
@@ -129,14 +128,18 @@ func SelectAndClaimPrize(index int, userName string) (string, error) {
 		return "", fmt.Errorf("Could not select Prize, please try again later... (%v)", index)
 	}
 
-	p.Claimed = true;
-	p.Username = userName
-	err = p.Save()
-	if err != nil {
-		return "", fmt.Errorf("Could not claim Prize, please try again later... %v", p.ID)
+	prizeInfo := ""
+	if(userName != p.Username) {
+		p.Claimed = true;
+		p.Username = userName
+		err = p.Save()
+		if err != nil {
+			return "", fmt.Errorf("Could not claim Prize, please try again later... %v", p.ID)
+		}
+		prizeInfo = fmt.Sprintf("Title: %v\nDetails: %v\nLicense Key: %v\nMore info: %v\n", p.Title, p.Description, p.LicenseKey, p.Link)
+	}  else {
+		prizeInfo = "Sorry, you've already claimed a raffle prize for this round. Please try again in te next round."
 	}
-
-	prizeInfo := fmt.Sprintf("%s - %s", p.Title, p.Description);
 
 	return prizeInfo, nil
 }
@@ -186,6 +189,27 @@ func List(bucket string) (string) {
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			fmt.Printf("key=%s, value=%s\n", k, v)
 			prizeList += fmt.Sprintf("Prize: %s\n", v)
+		}
+		return nil
+	})
+	return prizeList
+}
+
+func ListUnclaimed(bucket string) (string) {
+	if !open {
+		return "Prize list not available, please try again later..."
+	}
+
+	prizeList := "Prize List\n"
+
+	db.View(func(tx *bolt.Tx) error {
+		c := tx.Bucket([]byte(bucket)).Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			p, err := decode(v);
+			if err == nil && p.Claimed == false {
+				fmt.Printf("key=%s, value=%s\n", k, v)
+				prizeList += fmt.Sprintf("Prize: %s\n", v)
+			}
 		}
 		return nil
 	})
