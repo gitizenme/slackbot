@@ -181,7 +181,7 @@ func (pb bot) CheckForPrizeWinDeferred(p *robots.Payload) {
 		return
 	}
 
-	pick := rand.Intn(4)
+	pick := rand.Intn(100)
 	outcome := ""
 
 	log.Printf("Number of prizes: %v - pick %v", numberOfUnclaimedPrizes, pick)
