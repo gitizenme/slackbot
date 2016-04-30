@@ -150,6 +150,8 @@ func (pb bot) PrizeStatusDeferred(p *robots.Payload, admin bool) {
 
 func (pb bot) CheckForPrizeWinDeferred(p *robots.Payload) {
 
+	prize.Open()
+	defer prize.Close()
 	numberOfPrizes := prize.NumberOfPrizes(prize.PrizeBucketName)
 
 	pick := rand.Intn(4)

@@ -170,10 +170,10 @@ func NumberOfPrizes(bucket string) (int) {
 	var numberOfPrizes int
 
 	db.View(func(tx *bolt.Tx) error {
-		numberOfPrizes = 0;
+		numberOfPrizes = 0
 		c := tx.Bucket([]byte(PrizeBucketName)).Cursor()
 		for k, _ := c.First(); k != nil; k, _ = c.Next() {
-			numberOfPrizes++;
+			numberOfPrizes++
 		}
 		return nil
 	})
