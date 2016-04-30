@@ -95,7 +95,13 @@ func (pb bot) Run(p *robots.Payload) (slashCommandImmediateReturn string) {
 	switch p.Text {
 	case "init":
 		status = "initializing"
+		botInitialized = false
 		go pb.InitializeDeferred(p)
+		break;
+	case "reset":
+		status = "resetting"
+		botInitialized = false
+		go pb.ResetDeferred(p)
 		break;
 	case "status":
 		status = "running status"
@@ -123,6 +129,20 @@ func (pb bot) InitializeDeferred(p *robots.Payload) {
 	} else {
 		botInitialized = true;
 		message = "Initialization complete"
+	}
+	SendResponse(p, message)
+}
+
+func (pb bot) ResetDeferred(p *robots.Payload) {
+
+	message := ""
+	err := InitDb(p)
+	if (err != nil) {
+		botInitialized = false;
+		message = "Reset failed"
+	} else {
+		botInitialized = true;
+		message = "Reset complete"
 	}
 	SendResponse(p, message)
 }
