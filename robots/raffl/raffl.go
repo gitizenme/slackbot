@@ -2,7 +2,6 @@ package robots
 
 import (
 	"fmt"
-
 	"github.com/trinchan/slackbot/robots"
 	"math/rand"
 	"time"
@@ -87,12 +86,7 @@ func (pb bot) Run(p *robots.Payload) (slashCommandImmediateReturn string) {
 		break;
 	case "status":
 		status = "running status"
-		p, err := prize.GetPrize("100")
-		if err != nil {
-			status = "Prize not found"
-		}
-		status = fmt.Sprint(p)
-		//prize.List(prize.PrizeBucketName)                     // each key/val in people bucket
+		go pb.PrizeStatusDeferred(p)
 		break;
 	default:
 		status = "checking for winner"
@@ -127,6 +121,12 @@ var SendResponse = func(p *robots.Payload, message string) {
 		Parse:       robots.ParseStyleFull,
 	}
 	response.Send()
+}
+
+func (pb bot) PrizeStatusDeferred(p *robots.Payload) {
+	prize.Open()
+	defer prize.Close()
+	SendResponse(p, prize.List(prize.PrizeBucketName))
 }
 
 func (pb bot) CheckForPrizeWinDeferred(p *robots.Payload) {

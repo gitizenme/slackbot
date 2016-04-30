@@ -123,18 +123,22 @@ func GetPrize(id string) (*Prize, error) {
 	return p, nil
 }
 
-func List(bucket string) (error) {
+func List(bucket string) (string) {
 	if !open {
-		return fmt.Errorf("db must be opened before query!")
+		return "Prize list not available, please try again later..."
 	}
+
+	prizeList := "Prize List\n"
+
 	db.View(func(tx *bolt.Tx) error {
 		c := tx.Bucket([]byte(bucket)).Cursor()
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			fmt.Printf("key=%s, value=%s\n", k, v)
+			prizeList += fmt.Sprint("Prize: %s\n", v)
 		}
 		return nil
 	})
-	return nil;
+	return prizeList
 }
 
 func ListPrefix(bucket, prefix string) (error) {
